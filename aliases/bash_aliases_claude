@@ -1,0 +1,211 @@
+# Claude Code Helper Aliases
+# ==========================
+# Add to ~/.bash_aliases or ~/.zshrc
+
+# Platform detection
+if grep -qi microsoft /proc/version 2>/dev/null; then
+    IS_WSL=true
+else
+    IS_WSL=false
+fi
+
+# ─────────────────────────────────────────────────────────────
+# Screenshots (WSL only - Windows screenshots folder)
+# ─────────────────────────────────────────────────────────────
+if [ "$IS_WSL" = true ]; then
+    # Set your Windows username path
+    export WIN_USER="${WIN_USER:-/mnt/c/Users/$USER}"
+
+    alias cdss='cd "$WIN_USER/Pictures/Screenshots"'
+    alias ss='ls -lt "$WIN_USER/Pictures/Screenshots/" 2>/dev/null | head -10'
+    alias lastss='ls -t "$WIN_USER/Pictures/Screenshots/" 2>/dev/null | head -1'
+
+    # Get full path to most recent screenshot
+    lastss_path() {
+        echo "$WIN_USER/Pictures/Screenshots/$(ls -t "$WIN_USER/Pictures/Screenshots/" | head -1)"
+    }
+fi
+
+# ─────────────────────────────────────────────────────────────
+# Clipboard (WSL ↔ Windows)
+# ─────────────────────────────────────────────────────────────
+if [ "$IS_WSL" = true ]; then
+    alias clip='clip.exe'
+    alias paste='powershell.exe Get-Clipboard'
+
+    # Copy file contents to Windows clipboard
+    clipfile() {
+        cat "$1" | clip.exe
+        echo "Copied $1 to clipboard"
+    }
+
+    # Open file/URL with Windows default app
+    alias open='wslview'
+else
+    # macOS
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        alias clip='pbcopy'
+        alias paste='pbpaste'
+        clipfile() {
+            cat "$1" | pbcopy
+            echo "Copied $1 to clipboard"
+        }
+    # Linux with xclip
+    elif command -v xclip &> /dev/null; then
+        alias clip='xclip -selection clipboard'
+        alias paste='xclip -selection clipboard -o'
+        clipfile() {
+            cat "$1" | xclip -selection clipboard
+            echo "Copied $1 to clipboard"
+        }
+    fi
+fi
+
+# ─────────────────────────────────────────────────────────────
+# Image Processing
+# ─────────────────────────────────────────────────────────────
+
+# Resize image to 50% (faster processing for Claude)
+resize50() {
+    local output="small_$(basename "$1")"
+    convert "$1" -resize 50% "$output"
+    echo "Created: $output"
+}
+
+# Resize to specific width (maintains aspect ratio)
+resizew() {
+    local width="${2:-1200}"
+    local output="w${width}_$(basename "$1")"
+    convert "$1" -resize "${width}x" "$output"
+    echo "Created: $output (width: ${width}px)"
+}
+
+# Convert image to JPG (Claude processes JPGs faster)
+tojpg() {
+    local output="${1%.*}.jpg"
+    convert "$1" "$output"
+    echo "Created: $output"
+}
+
+# ─────────────────────────────────────────────────────────────
+# PDF Tools
+# ─────────────────────────────────────────────────────────────
+
+# PDF to images (for Claude to read visually)
+pdf2img() {
+    local pdf="$1"
+    local prefix="${2:-page}"
+    pdftoppm -jpeg -r 150 "$pdf" "$prefix"
+    echo "Created: ${prefix}-*.jpg"
+}
+
+# PDF to text
+pdf2txt() {
+    local pdf="$1"
+    local output="${2:-${pdf%.pdf}.txt}"
+    pdftotext -layout "$pdf" "$output"
+    echo "Created: $output"
+}
+
+# Extract pages from PDF
+pdfpages() {
+    local pdf="$1"
+    local range="$2"  # e.g., "1-5"
+    local output="${3:-extracted.pdf}"
+    qpdf "$pdf" --pages . "$range" -- "$output"
+    echo "Created: $output (pages $range)"
+}
+
+# ─────────────────────────────────────────────────────────────
+# JSON/YAML Processing
+# ─────────────────────────────────────────────────────────────
+
+# Pretty print JSON
+alias jqp='jq .'
+
+# Pretty print and colorize JSON
+jqc() {
+    jq -C . "$@" | less -R
+}
+
+# ─────────────────────────────────────────────────────────────
+# File Navigation
+# ─────────────────────────────────────────────────────────────
+
+# Tree with sensible defaults
+alias t='tree -L 2 --dirsfirst'
+alias t3='tree -L 3 --dirsfirst'
+alias t4='tree -L 4 --dirsfirst'
+
+# fd/fdfind compatibility (Ubuntu uses fdfind)
+if command -v fdfind &> /dev/null && ! command -v fd &> /dev/null; then
+    alias fd='fdfind'
+fi
+
+# bat/batcat compatibility (Ubuntu uses batcat)
+if command -v batcat &> /dev/null && ! command -v bat &> /dev/null; then
+    alias bat='batcat'
+fi
+
+# ─────────────────────────────────────────────────────────────
+# Document Conversion
+# ─────────────────────────────────────────────────────────────
+
+# Markdown to Word
+md2docx() {
+    local input="$1"
+    local output="${2:-${input%.md}.docx}"
+    pandoc "$input" -o "$output"
+    echo "Created: $output"
+}
+
+# Markdown to PDF
+md2pdf() {
+    local input="$1"
+    local output="${2:-${input%.md}.pdf}"
+    pandoc "$input" -o "$output"
+    echo "Created: $output"
+}
+
+# ─────────────────────────────────────────────────────────────
+# Help
+# ─────────────────────────────────────────────────────────────
+
+# List all Claude helper commands
+lsclaude() {
+    echo "Claude Code Helpers:"
+    echo ""
+    echo "Screenshots (WSL):"
+    echo "  cdss        → Screenshots folder"
+    echo "  ss          → List recent screenshots"
+    echo "  lastss      → Most recent screenshot name"
+    echo "  lastss_path → Full path to latest screenshot"
+    echo ""
+    echo "Clipboard:"
+    echo "  clip        → Copy stdin to clipboard"
+    echo "  paste       → Paste from clipboard"
+    echo "  clipfile X  → Copy file contents to clipboard"
+    echo ""
+    echo "Images:"
+    echo "  resize50 X     → Resize image to 50%"
+    echo "  resizew X 800  → Resize to width 800px"
+    echo "  tojpg X        → Convert to JPG"
+    echo ""
+    echo "PDF:"
+    echo "  pdf2img X         → Convert PDF pages to JPG"
+    echo "  pdf2txt X         → Extract text from PDF"
+    echo "  pdfpages X 1-5    → Extract pages 1-5"
+    echo ""
+    echo "JSON:"
+    echo "  jqp         → Pretty print JSON"
+    echo "  jqc         → Pretty print with color + pager"
+    echo ""
+    echo "Documents:"
+    echo "  md2docx X   → Markdown to Word"
+    echo "  md2pdf X    → Markdown to PDF"
+    echo ""
+    echo "Navigation:"
+    echo "  t / t3 / t4 → Tree (2/3/4 levels)"
+    echo "  fd          → Find files (fdfind alias)"
+    echo "  bat         → Cat with syntax highlighting"
+}
