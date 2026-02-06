@@ -100,8 +100,8 @@ qpdf --linearize document.pdf web-optimized.pdf
 # Markdown to Word
 pandoc document.md -o document.docx
 
-# Markdown to PDF (requires texlive)
-pandoc document.md -o document.pdf
+# Markdown to PDF (use wkhtmltopdf engine - lighter than texlive)
+pandoc document.md -o document.pdf --pdf-engine=wkhtmltopdf
 
 # Word to Markdown
 pandoc document.docx -o document.md

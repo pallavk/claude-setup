@@ -24,6 +24,7 @@ sudo apt install -y \
     bat \
     tree \
     pandoc \
+    wkhtmltopdf \
     curl
 
 # Python tools
