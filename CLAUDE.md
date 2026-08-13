@@ -38,6 +38,7 @@ After running the installer for your platform, these tools are available:
 
 ### Google Workspace
 - `gog` - Gmail/Calendar/Drive CLI; multi-account (`gog` = personal, `gog --account work` or `gog-work` = work)
+- Full setup guide (web + local, Claude + Codex): `docs/google-workspace-setup.md`
 
 ## Helper Aliases
 
@@ -103,5 +104,6 @@ claude-setup/
 │   ├── bash_aliases_claude  # Bash/Zsh aliases
 │   └── powershell_aliases.ps1  # PowerShell aliases
 └── docs/
-    └── tools-reference.md   # Detailed tool documentation
+    ├── tools-reference.md   # Detailed tool documentation
+    └── google-workspace-setup.md  # Email/Google setup for Claude & Codex, web & local
 ```

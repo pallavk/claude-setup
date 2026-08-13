@@ -19,6 +19,12 @@ To install these skills into your agent's global skills directory on a machine, 
 when those agents are present), or use `npx skills@latest add ./skills/<name>` from a
 checkout.
 
+## Email / Google Workspace
+
+Gmail/Calendar/Drive access goes through the `gog` CLI (multi-account: `gog` =
+primary, `gog --account work` = work). Setup for every environment is documented in
+`docs/google-workspace-setup.md`.
+
 ## Repo conventions
 
 - Any tool or alias change must follow `skills/add-tool/SKILL.md` — all installers and
