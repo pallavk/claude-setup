@@ -26,6 +26,7 @@ $wingetTools = @(
     @{id="sharkdp.bat"; name="bat"},
     @{id="JohnMacFarlane.Pandoc"; name="pandoc"},
     @{id="GitHub.cli"; name="GitHub CLI"},
+    @{id="GoLang.Go"; name="Go (for gog)"},
     @{id="Git.Git"; name="Git"}
 )
 
@@ -75,6 +76,7 @@ $tools = @(
     @{cmd="bat"; name="bat"},
     @{cmd="pandoc"; name="pandoc"},
     @{cmd="gh"; name="GitHub CLI"},
+    @{cmd="gog"; name="gog (Google CLI)"},
     @{cmd="git"; name="Git"}
 )
 
@@ -101,5 +103,7 @@ Write-Host "   1. Restart your terminal to refresh PATH"
 Write-Host "   2. Add PowerShell aliases to your profile:"
 Write-Host "      notepad `$PROFILE"
 Write-Host "   3. Authenticate GitHub: gh auth login"
+Write-Host "   4. Install gog (Google Workspace CLI): go install github.com/openclaw/gogcli/cmd/gog@latest"
+Write-Host "      Then: gog auth add you@gmail.com --services gmail,calendar,drive"
 Write-Host ""
 Write-Host "💡 For WSL integration, also run install-wsl.sh inside your WSL distro" -ForegroundColor Gray

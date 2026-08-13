@@ -319,6 +319,32 @@ gh workflow run build.yml
 
 ---
 
+### gog (Google Workspace CLI)
+
+**What it does:** Gmail, Google Calendar, Drive, Contacts and more from the command line. JSON-first output, multi-account.
+
+**Install:** `brew install openclaw/tap/gogcli` (macOS/Linux) or `go install github.com/openclaw/gogcli/cmd/gog@latest`
+
+**One-time setup (multi-account):**
+```bash
+# Create a "Desktop app" OAuth client in Google Cloud Console, download the JSON, then:
+gog auth credentials set ~/Downloads/client_secret_*.json
+gog auth add you@gmail.com --services gmail,calendar,drive      # personal
+gog auth add you@company.com --services gmail,calendar,drive    # work
+gog auth alias set work you@company.com
+gog auth list --check
+```
+
+**Daily use:**
+```bash
+gog gmail search 'is:unread'                 # personal (default account)
+gog --account work gmail search 'is:unread'  # work, via alias
+gog-work gmail search 'is:unread'            # same, via shell alias
+export GOG_ACCOUNT=you@gmail.com             # set default account
+```
+
+Used by `skills/email-triage/SKILL.md` for inbox triage across accounts.
+
 ## Clipboard (WSL/Windows)
 
 ### clip.exe / powershell

@@ -122,3 +122,13 @@ function lsclaude {
     Write-Host "  md2docx X      - Markdown to Word"
     Write-Host "  md2pdf X       - Markdown to PDF"
 }
+
+# ─────────────────────────────────────────────────────────────
+# Google Workspace (gog) — multi-account
+# ─────────────────────────────────────────────────────────────
+# gog-work routes commands to the work account (alias created with:
+#   gog auth alias set work you@company.com)
+
+function gog-work { gog --account work @args }
+function inbox { gog gmail search "in:inbox is:unread" --max 20 }
+function inbox-work { gog --account work gmail search "in:inbox is:unread" --max 20 }

@@ -1,43 +1,71 @@
 ---
 name: email-triage
-description: Triage the user's Gmail inbox — sweep recent unread/important mail, categorize it, apply labels, flag what needs a reply, and draft (never send) responses. Use when the user asks to "triage my email", "go through my inbox", "what needs a reply", or invokes /email-triage. Do NOT send any email; drafts only.
+description: Triage the user's Gmail inboxes using the gog CLI — sweep recent unread/important mail across personal and work accounts, categorize it, apply labels, flag what needs a reply, and draft (never send) responses. Use when the user asks to "triage my email", "go through my inbox", "what needs a reply", or invokes /email-triage. Do NOT send any email; drafts only.
 ---
 
-# Email Triage
+# Email Triage (gog CLI)
 
-Sweep the inbox, sort it into action buckets, and prepare reply drafts. This skill is
-read-mostly: it labels, archives obvious noise, and creates drafts. It never sends mail
-and never deletes anything non-obvious without confirmation.
+Sweep the inbox(es), sort into action buckets, and prepare reply drafts. This skill is
+read-mostly: it labels, and creates drafts. It never sends mail and never deletes
+anything without explicit instruction.
 
-## Requirements
+## Tooling: gog
 
-A Gmail integration must be available (Claude: the Gmail connector tools; Codex or other
-agents: an equivalent Gmail MCP server or CLI such as `gmailctl`/`himalaya`). If no email
-access is available, say so and stop — do not simulate results.
+Primary tool is the `gog` CLI (Google Workspace CLI, https://github.com/openclaw/gogcli).
+Check `command -v gog` first. If gog is missing, fall back to a Gmail MCP connector if
+one is available; if neither exists, say so and stop — do not simulate results.
+
+### Accounts
+
+The user maintains multiple accounts. Conventions in this setup:
+
+- **Personal (default):** plain `gog …` (default account, or `GOG_ACCOUNT` env)
+- **Work:** `gog --account work …` (account alias `work`; shell alias `gog-work`)
+- List accounts: `gog auth list --check`
+
+Unless the user names an account, triage **all** configured accounts and keep results
+clearly separated per account in the report.
+
+### Useful commands
+
+```bash
+gog gmail search 'in:inbox is:unread newer_than:3d' --json   # sweep query
+gog gmail thread get <threadId> --json                        # read a thread
+gog gmail labels list --json                                  # existing labels
+gog gmail labels create 'triage/needs-reply'                  # create label
+gog gmail thread modify <threadId> --add-label 'triage/needs-reply'
+gog gmail drafts create --to <addr> --subject <subj> --body-file <file> --thread <threadId>
+```
+
+Prefer `--json` output and parse with `jq`. Run each command per account
+(`gog` vs `gog --account work`). Flags can drift between gog versions — if a
+command errors, check `gog gmail --help` rather than guessing.
 
 ## Workflow
 
-1. **Scope the sweep.** Default: unread + anything in the inbox from the last 3 days.
-   If the user says "today" or "this week", adjust the query accordingly.
-2. **Fetch threads** (batches of ~20). For each thread capture: sender, subject, date,
-   whether the user is in To vs Cc, and a one-line gist.
+1. **Scope the sweep.** Default query: `in:inbox is:unread newer_than:3d`.
+   Adjust if the user says "today" / "this week".
+2. **Fetch threads** per account. For each: sender, subject, date, To vs Cc,
+   one-line gist (fetch thread bodies only for threads that look actionable).
 3. **Bucket each thread:**
    - **Needs reply** — a human asked the user something directly (user in To, question or request present).
-   - **Needs action, no reply** — invoices to pay, docs to review, calendar decisions.
+   - **Needs action, no reply** — invoices, docs to review, calendar decisions.
    - **FYI** — user in Cc, or informational updates worth a skim.
    - **Noise** — newsletters, promotions, automated notifications with no action.
-4. **Apply labels** matching the buckets (create `triage/needs-reply`, `triage/action`,
-   `triage/fyi` if missing). Archive **Noise** only if the user has previously said to;
-   otherwise just label it.
-5. **Draft replies** for every **Needs reply** thread: short, plain, in the user's voice
-   (match their prior replies in the thread for tone and sign-off). Save as Gmail drafts.
+4. **Apply labels** `triage/needs-reply`, `triage/action`, `triage/fyi` (create if
+   missing, per account). Label Noise but do not archive unless previously told to.
+5. **Draft replies** for every **Needs reply** thread using
+   `gog gmail drafts create` on the same thread, from the matching account.
+   Short, plain, in the user's voice (match their prior replies in the thread).
    NEVER send.
-6. **Report** in one compact summary: counts per bucket, a table of Needs-reply threads
-   (sender, subject, draft status), and anything time-sensitive at the top.
+6. **Report** one compact summary, grouped by account: counts per bucket, a table of
+   Needs-reply threads (sender, subject, draft created?), time-sensitive items on top.
 
 ## Hard rules
 
-- Never send email. Drafts only.
-- Never delete or mark-as-spam without explicit instruction in the current conversation.
-- Never label or open threads matching obviously sensitive queries the user excluded.
+- Never send email (`gog gmail send` is forbidden in this skill). Drafts only.
+- Never delete, archive-by-default, or mark-as-spam without explicit instruction in
+  the current conversation.
+- Never reply from the wrong account: drafts for work threads come from the work
+  account, personal from personal.
 - If a thread is ambiguous between buckets, prefer the higher-attention bucket.

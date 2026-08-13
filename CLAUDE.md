@@ -36,6 +36,9 @@ After running the installer for your platform, these tools are available:
 ### Git & GitHub
 - `gh` - GitHub CLI
 
+### Google Workspace
+- `gog` - Gmail/Calendar/Drive CLI; multi-account (`gog` = personal, `gog --account work` or `gog-work` = work)
+
 ## Helper Aliases
 
 When aliases are installed, these shortcuts are available:
@@ -49,6 +52,8 @@ When aliases are installed, these shortcuts are available:
 | `md2docx doc.md` | Markdown to Word |
 | `jqp` | Pretty print JSON |
 | `t` / `t3` | Tree view (2/3 levels) |
+| `gog-work` | gog against the work Google account |
+| `inbox` / `inbox-work` | Unread inbox peek (personal/work) |
 | `lsclaude` | Show all helpers |
 
 ### WSL-Specific

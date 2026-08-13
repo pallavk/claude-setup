@@ -168,6 +168,21 @@ md2pdf() {
 }
 
 # ─────────────────────────────────────────────────────────────
+# Google Workspace (gog) — multi-account
+# ─────────────────────────────────────────────────────────────
+# `gog` uses the personal account by default (GOG_ACCOUNT or gog default).
+# `gog-work` routes the same command to the work account via the "work"
+# alias created with: gog auth alias set work you@company.com
+
+if command -v gog &> /dev/null; then
+    alias gog-work='gog --account work'
+
+    # Quick inbox peeks
+    alias inbox='gog gmail search "in:inbox is:unread" --max 20'
+    alias inbox-work='gog --account work gmail search "in:inbox is:unread" --max 20'
+fi
+
+# ─────────────────────────────────────────────────────────────
 # Help
 # ─────────────────────────────────────────────────────────────
 
@@ -203,6 +218,11 @@ lsclaude() {
     echo "Documents:"
     echo "  md2docx X   → Markdown to Word"
     echo "  md2pdf X    → Markdown to PDF"
+    echo ""
+    echo "Email (gog):"
+    echo "  gog         → Google CLI, personal account"
+    echo "  gog-work    → Google CLI, work account"
+    echo "  inbox / inbox-work → Unread inbox peek"
     echo ""
     echo "Navigation:"
     echo "  t / t3 / t4 → Tree (2/3/4 levels)"
