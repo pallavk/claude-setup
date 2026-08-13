@@ -86,6 +86,11 @@ Codex; see AGENTS.md). Install locally with `scripts/install-skills.sh`.
 
 When adding or changing any tool or alias in this repo, follow `skills/add-tool/SKILL.md`.
 
+`scripts/install-skills.sh` also installs a curated set of third-party skills from
+[mattpocock/skills](https://github.com/mattpocock/skills) (tdd, diagnosing-bugs,
+to-spec, to-tickets, implement, handoff, research) via `npx skills@latest add`;
+update them with `npx skills update`. Skip with `SKIP_THIRD_PARTY=1`.
+
 ## File Structure
 
 ```

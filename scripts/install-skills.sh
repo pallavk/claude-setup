@@ -48,3 +48,34 @@ if [ "$installed_any" = false ]; then
 fi
 
 echo "Done. Skills also load automatically from the repo via CLAUDE.md / AGENTS.md."
+
+# ── Third-party skills: Matt Pocock's set ────────────────────────────────
+# https://github.com/mattpocock/skills — curated picks that match our workflow.
+# Installed via the cross-agent `skills` CLI (works for Claude Code, Codex, etc.).
+# Skip with: SKIP_THIRD_PARTY=1 scripts/install-skills.sh
+
+MATT_POCOCK_SKILLS=(
+    tdd
+    diagnosing-bugs
+    to-spec
+    to-tickets
+    implement
+    handoff
+    research
+)
+
+if [ "${SKIP_THIRD_PARTY:-0}" = "1" ]; then
+    echo "Skipping third-party skills (SKIP_THIRD_PARTY=1)."
+elif command -v npx >/dev/null 2>&1; then
+    echo ""
+    echo "Installing Matt Pocock skills (${MATT_POCOCK_SKILLS[*]})..."
+    for s in "${MATT_POCOCK_SKILLS[@]}"; do
+        npx -y skills@latest add "mattpocock/skills/$s" || \
+            echo "  WARN: failed to add mattpocock/skills/$s" >&2
+    done
+    echo "Update later with: npx skills update"
+else
+    echo "npx not found — skipping Matt Pocock skills." >&2
+    echo "Install manually: npx skills@latest add mattpocock/skills" >&2
+    echo "Or as a Claude Code plugin: claude plugins install mattpocock-skills" >&2
+fi

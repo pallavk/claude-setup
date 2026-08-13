@@ -17,7 +17,9 @@ When the user's request matches a skill's description, open its SKILL.md and fol
 To install these skills into your agent's global skills directory on a machine, run
 `scripts/install-skills.sh` (symlinks into `~/.claude/skills` and `~/.codex/skills`
 when those agents are present), or use `npx skills@latest add ./skills/<name>` from a
-checkout.
+checkout. The script also installs a curated set of third-party skills from
+mattpocock/skills (tdd, diagnosing-bugs, to-spec, to-tickets, implement, handoff,
+research); update with `npx skills update`, skip with `SKIP_THIRD_PARTY=1`.
 
 ## Email / Google Workspace
 
