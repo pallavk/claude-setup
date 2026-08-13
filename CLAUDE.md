@@ -67,6 +67,19 @@ When aliases are installed, these shortcuts are available:
 - **File search**: Claude uses `rg` internally - same syntax works
 - **Sharing content**: Use `clipfile` to copy file contents
 
+## Skills
+
+Portable agent skills live in `skills/<name>/SKILL.md` (work with Claude Code and
+Codex; see AGENTS.md). Install locally with `scripts/install-skills.sh`.
+
+| Skill | Purpose |
+|-------|---------|
+| `email-triage` | Sweep and label the Gmail inbox, draft (never send) replies |
+| `add-tool` | Add/remove a CLI tool in sync across all installers, aliases, docs |
+| `weekly-review` | End-of-week recap from calendar, email, git + next-week priorities |
+
+When adding or changing any tool or alias in this repo, follow `skills/add-tool/SKILL.md`.
+
 ## File Structure
 
 ```
@@ -76,6 +89,11 @@ claude-setup/
 │   ├── install-macos.sh     # macOS installer
 │   ├── install-ubuntu.sh    # Ubuntu/Debian installer
 │   └── install-windows.ps1  # Windows PowerShell installer
+│   └── install-skills.sh    # Symlink skills/ into ~/.claude and ~/.codex
+├── skills/
+│   ├── email-triage/SKILL.md
+│   ├── add-tool/SKILL.md
+│   └── weekly-review/SKILL.md
 ├── aliases/
 │   ├── bash_aliases_claude  # Bash/Zsh aliases
 │   └── powershell_aliases.ps1  # PowerShell aliases
