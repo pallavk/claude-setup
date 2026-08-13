@@ -36,6 +36,10 @@ After running the installer for your platform, these tools are available:
 ### Git & GitHub
 - `gh` - GitHub CLI
 
+### Google Workspace
+- `gog` - Gmail/Calendar/Drive CLI; multi-account (`gog` = personal, `gog --account work` or `gog-work` = work)
+- Full setup guide (web + local, Claude + Codex): `docs/google-workspace-setup.md`
+
 ## Helper Aliases
 
 When aliases are installed, these shortcuts are available:
@@ -49,6 +53,8 @@ When aliases are installed, these shortcuts are available:
 | `md2docx doc.md` | Markdown to Word |
 | `jqp` | Pretty print JSON |
 | `t` / `t3` | Tree view (2/3 levels) |
+| `gog-work` | gog against the work Google account |
+| `inbox` / `inbox-work` | Unread inbox peek (personal/work) |
 | `lsclaude` | Show all helpers |
 
 ### WSL-Specific
@@ -67,6 +73,24 @@ When aliases are installed, these shortcuts are available:
 - **File search**: Claude uses `rg` internally - same syntax works
 - **Sharing content**: Use `clipfile` to copy file contents
 
+## Skills
+
+Portable agent skills live in `skills/<name>/SKILL.md` (work with Claude Code and
+Codex; see AGENTS.md). Install locally with `scripts/install-skills.sh`.
+
+| Skill | Purpose |
+|-------|---------|
+| `email-triage` | Sweep and label the Gmail inbox, draft (never send) replies |
+| `add-tool` | Add/remove a CLI tool in sync across all installers, aliases, docs |
+| `weekly-review` | End-of-week recap from calendar, email, git + next-week priorities |
+
+When adding or changing any tool or alias in this repo, follow `skills/add-tool/SKILL.md`.
+
+`scripts/install-skills.sh` also installs a curated set of third-party skills from
+[mattpocock/skills](https://github.com/mattpocock/skills) (tdd, diagnosing-bugs,
+to-spec, to-tickets, implement, handoff, research) via `npx skills@latest add`;
+update them with `npx skills update`. Skip with `SKIP_THIRD_PARTY=1`.
+
 ## File Structure
 
 ```
@@ -76,9 +100,15 @@ claude-setup/
 │   ├── install-macos.sh     # macOS installer
 │   ├── install-ubuntu.sh    # Ubuntu/Debian installer
 │   └── install-windows.ps1  # Windows PowerShell installer
+│   └── install-skills.sh    # Symlink skills/ into ~/.claude and ~/.codex
+├── skills/
+│   ├── email-triage/SKILL.md
+│   ├── add-tool/SKILL.md
+│   └── weekly-review/SKILL.md
 ├── aliases/
 │   ├── bash_aliases_claude  # Bash/Zsh aliases
 │   └── powershell_aliases.ps1  # PowerShell aliases
 └── docs/
-    └── tools-reference.md   # Detailed tool documentation
+    ├── tools-reference.md   # Detailed tool documentation
+    └── google-workspace-setup.md  # Email/Google setup for Claude & Codex, web & local
 ```

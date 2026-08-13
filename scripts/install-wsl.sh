@@ -59,6 +59,21 @@ if ! command -v gh &> /dev/null; then
     sudo apt install gh -y
 fi
 
+# Google Workspace CLI (Gmail, Calendar, Drive)
+echo ""
+echo "📧 Installing gog (Google Workspace CLI)..."
+if ! command -v gog &> /dev/null; then
+    if command -v brew &> /dev/null; then
+        brew install openclaw/tap/gogcli
+    elif command -v go &> /dev/null; then
+        go install github.com/openclaw/gogcli/cmd/gog@latest
+    else
+        echo "⚠️  Neither brew nor go found. Install gog manually:"
+        echo "   brew install openclaw/tap/gogcli"
+        echo "   or: go install github.com/openclaw/gogcli/cmd/gog@latest"
+    fi
+fi
+
 # Verify installations
 echo ""
 echo "✅ Verifying installations..."
@@ -77,6 +92,7 @@ tools=(
     "wslview:wslu"
     "yq:yq"
     "gh:GitHub CLI"
+    "gog:gog (Google CLI)"
 )
 
 for tool_pair in "${tools[@]}"; do
@@ -109,5 +125,6 @@ echo "📝 Next steps:"
 echo "   1. Copy aliases: cat aliases/bash_aliases_claude >> ~/.bash_aliases"
 echo "   2. Reload shell: source ~/.bash_aliases"
 echo "   3. Authenticate GitHub: gh auth login"
+echo "   4. Set up gog accounts: gog auth add you@gmail.com --services gmail,calendar,drive"
 echo ""
 echo "💡 Note: On Ubuntu, use 'batcat' instead of 'bat' and 'fdfind' instead of 'fd'"

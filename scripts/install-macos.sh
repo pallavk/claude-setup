@@ -29,6 +29,11 @@ brew install \
     pandoc \
     gh
 
+# Google Workspace CLI (Gmail, Calendar, Drive)
+echo ""
+echo "📧 Installing gog (Google Workspace CLI)..."
+brew install openclaw/tap/gogcli
+
 # Python tools
 echo ""
 echo "🐍 Installing Python tools..."
@@ -58,6 +63,7 @@ tools=(
     "tree:tree"
     "pandoc:pandoc"
     "gh:GitHub CLI"
+    "gog:gog (Google CLI)"
 )
 
 for tool_pair in "${tools[@]}"; do
@@ -91,3 +97,8 @@ echo "   1. Copy aliases to your shell config:"
 echo "      cat aliases/bash_aliases_claude >> ~/.zshrc"
 echo "   2. Reload shell: source ~/.zshrc"
 echo "   3. Authenticate GitHub: gh auth login"
+echo "   4. Set up gog accounts (see docs/tools-reference.md):"
+echo "      gog auth credentials set ~/Downloads/client_secret_*.json"
+echo "      gog auth add you@gmail.com --services gmail,calendar,drive"
+echo "      gog auth add you@company.com --services gmail,calendar,drive"
+echo "      gog auth alias set work you@company.com"
